@@ -53,8 +53,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Ar
 .ni{width:16px;height:16px;flex-shrink:0;opacity:.6;display:inline-flex;align-items:center;justify-content:center}
 .nb.on .ni,.nb:hover .ni{opacity:1}
 .nbadge{margin-left:auto;background:var(--red);color:#fff;font-size:10px;font-weight:700;padding:1px 6px;border-radius:10px}
-.sb-bot{margin-top:auto;padding-top:12px;border-top:1px solid var(--bd)}
-.sb-date{padding:0 7px;font-size:11px;color:var(--ink3);line-height:1.9}
 .sb-date strong{color:var(--ink2);font-weight:600;display:block;font-size:12px}
 
 /* MOBILE TOP BAR */
@@ -246,6 +244,26 @@ textarea{resize:vertical;line-height:1.55}
 
 /* MISC */
 .checkicon{width:11px;height:11px;color:#fff}
+/* TAGESPLAN */
+.tp-item{display:flex;align-items:center;gap:10px;padding:8px 4px;border-bottom:1px solid var(--bd);cursor:pointer;transition:opacity .15s}
+.tp-item:last-child{border-bottom:none}
+.tp-item:hover{opacity:.75}
+.tp-chk{width:18px;height:18px;border-radius:50%;border:2px solid var(--bd2);display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .15s}
+.tp-chk.on{background:var(--green);border-color:var(--green)}
+.tp-txt{flex:1;font-size:13px;font-weight:500}
+/* TODAY STATS GRID */
+.today-stats{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.today-rings{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;padding:4px 0}
+.ring-sm{display:flex;flex-direction:column;align-items:center;gap:5px}
+.ring-sm-box{position:relative;width:58px;height:58px;flex-shrink:0}
+.ring-sm-box svg{display:block;width:100%;height:100%;transform:rotate(-90deg)}
+.ring-sm-val{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700}
+.ring-sm-lbl{font-size:10px;color:var(--ink3);font-weight:500;text-align:center;max-width:60px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+/* SIDEBAR FOOTER */
+.sb-foot{margin-top:auto;padding-top:14px;border-top:1px solid var(--bd);display:flex;flex-direction:column;gap:2px}
+.sb-sync{display:flex;align-items:center;gap:5px;padding:2px 9px;font-size:10.5px;color:var(--ink3)}
+.sb-day{padding:6px 9px 0;font-size:13px;font-weight:700;color:var(--ink)}
+.sb-date-sub{padding:0 9px 6px;font-size:10.5px;color:var(--ink3)}
 @media(max-width:768px){
   .sb{position:fixed;top:0;left:0;bottom:0;transform:translateX(-105%);box-shadow:none;z-index:150;padding-top:calc(18px + env(safe-area-inset-top));padding-bottom:calc(20px + env(safe-area-inset-bottom))}
   .sb.open{transform:translateX(0);box-shadow:var(--sh2)}
@@ -255,6 +273,7 @@ textarea{resize:vertical;line-height:1.55}
   .main{padding-top:calc(50px + env(safe-area-inset-top));padding-bottom:calc(var(--bnav) + env(safe-area-inset-bottom))}
   .page{padding:14px 14px 20px}
   .g2,.g3,.todo-cols{grid-template-columns:1fr}
+  .today-stats{grid-template-columns:1fr}
   .g4{grid-template-columns:1fr 1fr}
   .greet h1{font-size:22px}
   .tcol-opts{flex-wrap:wrap}
@@ -279,10 +298,11 @@ textarea{resize:vertical;line-height:1.55}
   <button class="nb" data-p="budget" onclick="nav('budget',this)"><span class="ni" id="ni-budget"></span>Budget</button>
   <button class="nb" data-p="shopping" onclick="nav('shopping',this)"><span class="ni" id="ni-shopping"></span>Einkauf</button>
   <button class="nb" data-p="gym" onclick="nav('gym',this)"><span class="ni" id="ni-gym"></span>Gym</button>
-  <div class="sb-bot">
+  <div class="sb-foot">
     <button class="theme-btn" onclick="toggleTheme()"><span class="ni" id="ni-theme"></span><span id="theme-label">Dark Mode</span></button>
-    <div id="syncStatus" style="font-size:10.5px;color:var(--ink3);padding:5px 9px 2px"></div>
-    <div class="sb-date"><strong id="sbd"></strong><span id="sbdt"></span></div>
+    <div class="sb-sync" id="syncStatus"></div>
+    <div class="sb-day" id="sbd"></div>
+    <div class="sb-date-sub" id="sbdt"></div>
   </div>
 </nav>
 
@@ -301,12 +321,24 @@ textarea{resize:vertical;line-height:1.55}
 <div class="page on" id="p-today">
   <div class="greet"><h1 id="gh"></h1><p id="gs"></p></div>
 
-  <div class="card" style="margin-bottom:14px">
+  <div class="card" style="margin-bottom:12px">
+    <div class="ch">
+      <div class="cl" style="margin:0">Tagesplan</div>
+      <span style="font-size:11px;color:var(--ink3)" id="tpMeta"></span>
+    </div>
+    <div id="tagesplanList"></div>
+    <div style="display:flex;gap:6px;margin-top:8px">
+      <input id="tpInput" placeholder="Was möchtest du heute erledigen?" onkeydown="if(event.key==='Enter')addTagesplanItem()">
+      <button class="btn bp bsm" onclick="addTagesplanItem()">+</button>
+    </div>
+  </div>
+
+  <div class="card" style="margin-bottom:12px">
     <div class="ch"><div class="cl" style="margin:0">Offene Aufgaben</div><button class="btn bsm" onclick="navTo('todo')">Alle →</button></div>
     <div id="todayTodos"></div>
   </div>
 
-  <div class="g2" id="todayGrid"></div>
+  <div class="today-stats" id="todayGrid"></div>
 </div>
 
 <!-- ══ TO-DO ══ -->
@@ -630,6 +662,7 @@ function emptyMonth(){
 function defaultState(){
   return{
     schemaVersion:SCHEMA_VERSION,
+    tagesplan:{},
     todos:{work:[],private:[],uni:[]},
     habits:{
       daily:DEFAULT_DAILY_HABITS.map(n=>({id:uid(),name:n,history:{}})),
@@ -691,6 +724,9 @@ function recomputeCategorySpent(ym){
 function ensureDefaults(state){
   state.schemaVersion=SCHEMA_VERSION;
   state.updatedAt=Number(state.updatedAt)||0;
+  state.tagesplan=obj(state.tagesplan);
+  // Alte Tage aufräumen -- nur heute behalten
+  Object.keys(state.tagesplan).forEach(k=>{if(k!==TODAY)delete state.tagesplan[k];});
   state.todos=obj(state.todos);
   ['work','private','uni'].forEach(c=>state.todos[c]=arr(state.todos[c]));
   state.habits=obj(state.habits);
@@ -835,35 +871,80 @@ function updateBadge(){
 // ═══════════════════════════════════════
 // HEUTE
 // ═══════════════════════════════════════
+function todayPlan(){return arr(S.tagesplan[TODAY]||[]);}
+function addTagesplanItem(){
+  const inp=document.getElementById('tpInput');
+  const text=inp.value.trim();
+  if(!text)return;
+  if(!S.tagesplan[TODAY])S.tagesplan[TODAY]=[];
+  S.tagesplan[TODAY].push({id:uid(),text,done:false});
+  inp.value='';
+  save();rTagesplan();
+}
+function checkTagesplanItem(id){
+  const items=S.tagesplan[TODAY];
+  if(!items)return;
+  const idx=items.findIndex(i=>i.id===id);
+  if(idx<0)return;
+  // Kurze Animation, dann sofort entfernen
+  const el=document.getElementById('tpi-'+id);
+  if(el){el.style.opacity='0';el.style.transform='translateX(14px)';}
+  setTimeout(()=>{
+    items.splice(idx,1);
+    save();rTagesplan();
+  },220);
+}
+function rTagesplan(){
+  const items=todayPlan();
+  const open=items.filter(i=>!i.done);
+  document.getElementById('tpMeta').textContent=open.length?open.length+' offen':'';
+  document.getElementById('tagesplanList').innerHTML=open.length
+    ?open.map(i=>`<div class="tp-item" id="tpi-${i.id}" onclick="checkTagesplanItem('${i.id}')" style="transition:opacity .22s,transform .22s">
+        <div class="tp-chk"></div>
+        <span class="tp-txt">${escapeHtml(i.text)}</span>
+      </div>`).join('')
+    :'<div class="empty" style="padding:8px 0">Alles erledigt — freier Tag 🎉</div>';
+}
+function ringSm(pct,color,label){
+  const size=58,stroke=6,r=(size-stroke)/2,c=size/2,circ=2*Math.PI*r;
+  const off=circ*(1-Math.max(0,Math.min(100,pct))/100);
+  return`<div class="ring-sm">
+    <div class="ring-sm-box">
+      <svg viewBox="0 0 ${size} ${size}"><circle cx="${c}" cy="${c}" r="${r}" fill="none" stroke="var(--s4)" stroke-width="${stroke}"/><circle cx="${c}" cy="${c}" r="${r}" fill="none" stroke="${color}" stroke-width="${stroke}" stroke-linecap="round" stroke-dasharray="${circ.toFixed(1)}" stroke-dashoffset="${off.toFixed(1)}"/></svg>
+      <div class="ring-sm-val" style="color:${color}">${Math.round(pct)}%</div>
+    </div>
+    <div class="ring-sm-lbl">${escapeHtml(label)}</div>
+  </div>`;
+}
 function rToday(){
   const h=NOW.getHours();
   document.getElementById('gh').textContent=(h<12?'Guten Morgen':h<18?'Guten Tag':'Guten Abend')+', Luis.';
   document.getElementById('gs').textContent=NOW.toLocaleDateString('de-DE',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
 
-  // Todos heute (offen)
+  rTagesplan();
+
+  // Offene Todos
   const allOpen=[...arr(S.todos.work).filter(t=>!t.done).map(t=>({...t,cat:'work'})),
                  ...arr(S.todos.private).filter(t=>!t.done).map(t=>({...t,cat:'private'})),
                  ...arr(S.todos.uni).filter(t=>!t.done).map(t=>({...t,cat:'uni'}))];
-  document.getElementById('todayTodos').innerHTML=allOpen.length?allOpen.slice(0,9).map(t=>`
-    <div class="row"><span class="tag ${t.cat==='work'?'tw':t.cat==='uni'?'tu':'tp'}">${t.cat==='work'?'W':t.cat==='uni'?'U':'P'}</span>
-    <span style="flex:1;font-size:13px;font-weight:500">${escapeHtml(t.text)}</span>
-    ${t.deadline?`<span class="ti-due">${fmtDate(t.deadline)}</span>`:''}</div>`).join('')
+  document.getElementById('todayTodos').innerHTML=allOpen.length
+    ?allOpen.slice(0,9).map(t=>`
+      <div class="row"><span class="tag ${t.cat==='work'?'tw':t.cat==='uni'?'tu':'tp'}">${t.cat==='work'?'W':t.cat==='uni'?'U':'P'}</span>
+      <span style="flex:1;font-size:13px;font-weight:500">${escapeHtml(t.text)}</span>
+      ${t.deadline?`<span class="ti-due">${fmtDate(t.deadline)}</span>`:''}</div>`).join('')
     :'<div class="empty">Alles erledigt!</div>';
 
-  // Habits heute
-  const dailyHtml=arr(S.habits.daily).map(hb=>{
-    const on=!!hb.history[TODAY];
-    return`<div class="hrow" onclick="toggleDailyHabit('${hb.id}')"><div class="hchk ${on?'on':''}">${on?ico(IC.check,11,'#fff'):''}</div><span style="flex:1;font-size:13px;font-weight:500">${escapeHtml(hb.name)}</span><span class="streak-pill">${streakFor(hb)}🔥</span></div>`;
-  }).join('')||'<div class="empty">Keine Habits</div>';
-
+  // Habit-Ringe (kompakt)
+  const daily=arr(S.habits.daily);
+  const doneTodayCount=daily.filter(hb=>hb.history[TODAY]).length;
+  const dailyPct=daily.length?doneTodayCount/daily.length*100:0;
   const wk=weekStartKey(NOW);
-  const weeklyPending=arr(S.habits.weekly).filter(hb=>weeklyCount(hb,wk)<hb.target);
-  const weeklyHtml=weeklyPending.length?weeklyPending.map(hb=>{
-    const done=weeklyCount(hb,wk);
-    return`<div class="row"><span style="flex:1;font-size:12.5px">${escapeHtml(hb.name)}</span><span style="font-size:11.5px;color:var(--ink3)">${done}/${hb.target}</span></div>`;
-  }).join(''):'<div class="empty" style="padding:8px 0">Diese Woche alles erreicht!</div>';
+  const weeklyHabits=arr(S.habits.weekly);
+  const weeklyTotal=weeklyHabits.reduce((s,hb)=>s+hb.target,0);
+  const weeklyDone=weeklyHabits.reduce((s,hb)=>s+Math.min(weeklyCount(hb,wk),hb.target),0);
+  const weeklyPct=weeklyTotal?weeklyDone/weeklyTotal*100:0;
 
-  // Budget Status
+  // Budget
   const ym=ymKey(NOW.getFullYear(),NOW.getMonth());
   const m=ensureMonth(ym);
   recomputeCategorySpent(ym);
@@ -876,10 +957,16 @@ function rToday(){
 
   document.getElementById('todayGrid').innerHTML=`
     <div class="card">
-      <div class="cl">Habits heute</div>
-      ${dailyHtml}
-      <div class="dv"></div>
-      ${weeklyHtml}
+      <div class="cl" style="margin-bottom:10px">Habits</div>
+      <div class="today-rings">
+        ${ringSm(dailyPct,'var(--green)','Daily')}
+        ${ringSm(weeklyPct,'var(--blue)','Weekly')}
+        ${weeklyHabits.slice(0,3).map(hb=>{
+          const pct=weeklyTotal?Math.min(100,weeklyCount(hb,wk)/hb.target*100):0;
+          return ringSm(pct,pct>=100?'var(--green)':'var(--purple)',hb.name);
+        }).join('')}
+      </div>
+      <div style="margin-top:10px;font-size:11.5px;color:var(--ink3);text-align:center">${doneTodayCount}/${daily.length} heute · ${weeklyDone}/${weeklyTotal} diese Woche</div>
     </div>
     <div class="card">
       <div class="cl">Budget ${MO[NOW.getMonth()]}</div>
