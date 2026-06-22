@@ -73,7 +73,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Ar
 /* MAIN */
 .main{flex:1;height:100vh;height:100dvh;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;scroll-behavior:smooth}
 ::-webkit-scrollbar{width:3px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--bd2);border-radius:3px}
-.page{display:none;padding:24px 26px;max-width:1380px;animation:fi .16s ease}
+.page{display:none;padding:26px 34px;max-width:1680px;animation:fi .16s ease}
 .page.on{display:block}
 @keyframes fi{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
 
@@ -148,14 +148,37 @@ textarea{resize:vertical;line-height:1.55}
 
 /* FILTER TABS */
 .ftabs{display:flex;gap:5px;margin-bottom:14px;flex-wrap:wrap}
-.fit-pick{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.fit-card{display:flex;flex-direction:column;align-items:flex-start;gap:7px;background:var(--surf);border:1px solid var(--bd);border-radius:var(--r);box-shadow:var(--sh);padding:20px 16px;cursor:pointer;transition:all .14s;font-family:inherit;text-align:left;-webkit-tap-highlight-color:transparent}
-.fit-card:hover{border-color:var(--bd2);transform:translateY(-2px)}
-.fit-ic{display:inline-flex;width:30px;height:30px;color:var(--ink);align-items:center;justify-content:center}
-.fit-ic svg{width:30px;height:30px}
-.fit-name{font-size:15px;font-weight:700;color:var(--ink)}
-.fit-meta{font-size:11px;color:var(--ink3);font-weight:500}
-@media(max-width:480px){.fit-pick{grid-template-columns:1fr}}
+.fit-pick{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.fit-card{position:relative;display:flex;flex-direction:column;gap:18px;background:var(--surf);border:1px solid var(--bd);border-radius:18px;box-shadow:var(--sh);padding:24px 24px 22px;cursor:pointer;transition:transform .18s cubic-bezier(.2,.8,.2,1),border-color .18s,box-shadow .18s;font-family:inherit;text-align:left;overflow:hidden;-webkit-tap-highlight-color:transparent;min-height:178px}
+.fit-card:hover{transform:translateY(-3px);border-color:var(--bd2);box-shadow:var(--sh2)}
+.fit-glow{position:absolute;top:-40%;right:-20%;width:240px;height:240px;border-radius:50%;filter:blur(46px);opacity:.16;pointer-events:none;transition:opacity .25s}
+.fit-card:hover .fit-glow{opacity:.30}
+.fc-kraft .fit-glow{background:var(--purple)}
+.fc-lauf .fit-glow{background:var(--blue)}
+.fit-top{display:flex;align-items:center;justify-content:space-between;position:relative;z-index:1}
+.fit-ic{display:inline-flex;width:48px;height:48px;border-radius:13px;align-items:center;justify-content:center;border:1px solid var(--bd2)}
+.fit-ic svg{width:25px;height:25px}
+.fc-kraft .fit-ic{background:var(--purple2);color:var(--purple)}
+.fc-lauf .fit-ic{background:var(--blue2);color:var(--blue)}
+.fit-arrow{display:inline-flex;width:22px;height:22px;color:var(--ink3);transition:transform .18s,color .18s}
+.fit-card:hover .fit-arrow{transform:translateX(3px);color:var(--ink)}
+.fit-body{position:relative;z-index:1;display:flex;flex-direction:column;gap:3px;margin-top:auto}
+.fit-name{font-size:21px;font-weight:800;color:var(--ink);letter-spacing:-.5px}
+.fit-meta{font-size:12px;color:var(--ink3);font-weight:500}
+.fit-stats{display:flex;gap:18px;position:relative;z-index:1;padding-top:14px;border-top:1px solid var(--bd)}
+.fit-stat-v{font-size:15px;font-weight:800;color:var(--ink);letter-spacing:-.3px}
+.fit-stat-l{font-size:9.5px;color:var(--ink3);font-weight:600;text-transform:uppercase;letter-spacing:.4px;margin-top:1px}
+.quick-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:14px}
+.quick-card{margin:0}
+.quick-tag{font-size:11.5px;color:var(--blue);font-weight:700}
+.quick-row{display:flex;gap:8px;flex-wrap:wrap}
+.quick-field{flex:1;min-width:74px;display:flex;flex-direction:column;gap:4px}
+.quick-field.qf-wide{flex:1.6;min-width:120px}
+.quick-field label{font-size:9.5px;color:var(--ink3);font-weight:600;text-transform:uppercase;letter-spacing:.4px}
+.quick-field input,.quick-field select{width:100%}
+.quick-status{font-size:11.5px;font-weight:600;margin-top:8px;min-height:15px}
+@media(max-width:900px){.quick-grid{grid-template-columns:1fr}}
+@media(max-width:560px){.fit-pick{grid-template-columns:1fr}.fit-card{min-height:150px}.fit-name{font-size:19px}}
 .run-stat-row{display:flex;gap:10px}
 .run-stat{flex:1;background:var(--s2);border:1px solid var(--bd);border-radius:var(--rsm);padding:11px 12px}
 .run-stat-n{font-size:19px;font-weight:800;color:var(--ink);letter-spacing:-.5px}
@@ -461,24 +484,56 @@ textarea{resize:vertical;line-height:1.55}
   <!-- Auswahl-Screen -->
   <div id="gymPicker">
     <div class="fit-pick">
-      <button class="fit-card" onclick="setGymView('kraft')">
-        <span class="fit-ic" id="fitIcKraft"></span>
-        <span class="fit-name">Krafttraining</span>
-        <span class="fit-meta" id="fitMetaKraft"></span>
+      <button class="fit-card fc-kraft" onclick="setGymView('kraft')">
+        <div class="fit-glow"></div>
+        <div class="fit-top">
+          <span class="fit-ic" id="fitIcKraft"></span>
+          <span class="fit-arrow" id="fitArrowKraft"></span>
+        </div>
+        <div class="fit-body">
+          <span class="fit-name">Krafttraining</span>
+          <span class="fit-meta" id="fitMetaKraft"></span>
+        </div>
+        <div class="fit-stats" id="fitStatsKraft"></div>
       </button>
-      <button class="fit-card" onclick="setGymView('lauf')">
-        <span class="fit-ic" id="fitIcLauf"></span>
-        <span class="fit-name">Laufen</span>
-        <span class="fit-meta" id="fitMetaLauf"></span>
+      <button class="fit-card fc-lauf" onclick="setGymView('lauf')">
+        <div class="fit-glow"></div>
+        <div class="fit-top">
+          <span class="fit-ic" id="fitIcLauf"></span>
+          <span class="fit-arrow" id="fitArrowLauf"></span>
+        </div>
+        <div class="fit-body">
+          <span class="fit-name">Laufen</span>
+          <span class="fit-meta" id="fitMetaLauf"></span>
+        </div>
+        <div class="fit-stats" id="fitStatsLauf"></div>
       </button>
     </div>
-    <div class="card" style="margin-top:14px">
-      <div class="ch"><div class="cl" style="margin:0">Aus Screenshot eintragen</div></div>
-      <div style="font-size:11.5px;color:var(--ink3);margin-bottom:10px;line-height:1.5">Screenshot aus deiner Fitness-App (Apple Health, Strava, Hevy …) hochladen — Werte werden automatisch erkannt und eingetragen.</div>
-      <input type="file" id="fitShot" accept="image/*" style="display:none" onchange="handleFitShot(event)">
-      <button class="btn bp" style="width:100%;justify-content:center" onclick="document.getElementById('fitShot').click()"><span id="fitUploadIc"></span>Screenshot hochladen</button>
-      <div id="fitShotStatus" style="font-size:12px;margin-top:10px;min-height:16px"></div>
-      <div id="fitShotPreview"></div>
+
+    <div class="quick-grid">
+      <div class="card quick-card">
+        <div class="ch"><div class="cl" style="margin:0">Lauf schnell erfassen</div><span class="quick-tag" id="quickRunPace"></span></div>
+        <div class="quick-row">
+          <div class="quick-field"><label>Distanz</label><input type="number" id="qrDist" placeholder="km" inputmode="decimal" oninput="quickRunPacePreview()"></div>
+          <div class="quick-field"><label>Dauer</label><input type="number" id="qrDur" placeholder="Min." inputmode="numeric" oninput="quickRunPacePreview()"></div>
+          <div class="quick-field"><label>Ø HF</label><input type="number" id="qrHr" placeholder="optional" inputmode="numeric"></div>
+          <div class="quick-field"><label>Datum</label><input type="date" id="qrDate"></div>
+        </div>
+        <button class="btn bp" style="width:100%;justify-content:center;margin-top:11px" onclick="quickAddRun()">Lauf eintragen</button>
+        <div id="qrStatus" class="quick-status"></div>
+      </div>
+
+      <div class="card quick-card">
+        <div class="ch"><div class="cl" style="margin:0">Satz schnell erfassen</div></div>
+        <div class="quick-row">
+          <div class="quick-field qf-wide"><label>Übung</label><select id="qsEx"></select></div>
+          <div class="quick-field"><label>Gewicht</label><input type="number" id="qsWeight" placeholder="kg" inputmode="decimal"></div>
+          <div class="quick-field"><label>Wdh.</label><input type="number" id="qsReps" placeholder="reps" inputmode="numeric"></div>
+          <div class="quick-field"><label>Datum</label><input type="date" id="qsDate"></div>
+        </div>
+        <button class="btn bp" style="width:100%;justify-content:center;margin-top:11px" onclick="quickAddSet()">Satz eintragen</button>
+        <div id="qsStatus" class="quick-status"></div>
+      </div>
     </div>
   </div>
 
@@ -670,6 +725,7 @@ const IC={
   moon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8Z"/></svg>',
   run:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="13" cy="4" r="2"/><path d="m9 21 1.5-5 2.5-2 1 4 4 2"/><path d="m5 12 3-1 3 2 1-3"/><path d="M14 9.5 16 8l3 1"/></svg>',
   camera:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3Z"/><circle cx="12" cy="13" r="3"/></svg>',
+  arrowRight:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>',
 };
 function ico(svg,sz,c){return'<span style="display:inline-flex;width:'+sz+'px;height:'+sz+'px;color:'+(c||'currentColor')+';flex-shrink:0">'+svg+'</span>';}
 
@@ -1489,17 +1545,87 @@ function rGym(){
   else rGymPicker();
 }
 function rGymPicker(){
-  // Icons
   document.getElementById('fitIcKraft').innerHTML=IC.dumbbell;
   document.getElementById('fitIcLauf').innerHTML=IC.run;
-  document.getElementById('fitUploadIc').innerHTML=ico(IC.camera,16);
-  // Meta: letzte Aktivität je Bereich
+  document.getElementById('fitArrowKraft').innerHTML=IC.arrowRight;
+  document.getElementById('fitArrowLauf').innerHTML=IC.arrowRight;
+
+  // ── Kraft: letzte Session + Anzahl Sessions diese Woche ──
   const sessions=arr(S.gym.sessions);
   const lastSession=sessions.length?sessions.slice().sort((a,b)=>a.date<b.date?1:-1)[0]:null;
   document.getElementById('fitMetaKraft').textContent=lastSession?('Zuletzt '+fmtDate(lastSession.date)):'Noch keine Sätze';
+  const wk=weekStartKey(NOW);
+  const weDate=new Date(wk+'T00:00:00');weDate.setDate(weDate.getDate()+6);const we=dKey(weDate);
+  const kraftThisWk=sessions.filter(s=>s.date>=wk&&s.date<=we).length;
+  const totalSets=sessions.reduce((n,s)=>n+arr(s.entries).length,0);
+  document.getElementById('fitStatsKraft').innerHTML=`
+    <div><div class="fit-stat-v">${kraftThisWk}</div><div class="fit-stat-l">Diese Woche</div></div>
+    <div><div class="fit-stat-v">${totalSets}</div><div class="fit-stat-l">Sätze gesamt</div></div>`;
+
+  // ── Lauf: letzter Lauf + km diese Woche ──
   const runs=allRunsSorted();
   const lastRun=runs.length?runs[runs.length-1]:null;
   document.getElementById('fitMetaLauf').textContent=lastRun?('Zuletzt '+fmtDate(lastRun.date)+' · '+lastRun.distanceKm+'km'):'Noch keine Läufe';
+  const wkRuns=arr(S.gym.runs).filter(r=>r.date>=wk&&r.date<=we);
+  const wkKm=wkRuns.reduce((s,r)=>s+(Number(r.distanceKm)||0),0);
+  document.getElementById('fitStatsLauf').innerHTML=`
+    <div><div class="fit-stat-v">${wkKm.toFixed(1)}</div><div class="fit-stat-l">km/Woche</div></div>
+    <div><div class="fit-stat-v">${wkRuns.length}</div><div class="fit-stat-l">Läufe</div></div>`;
+
+  // ── Quick-Erfassung befüllen ──
+  const exSel=document.getElementById('qsEx');
+  if(exSel){
+    const prev=exSel.value;
+    exSel.innerHTML=arr(S.gym.exercises).map(e=>`<option value="${e.id}">${escapeHtml(e.name)}</option>`).join('');
+    if(prev)exSel.value=prev;
+  }
+  const qrDate=document.getElementById('qrDate'),qsDate=document.getElementById('qsDate');
+  if(qrDate&&!qrDate.value)qrDate.value=TODAY;
+  if(qsDate&&!qsDate.value)qsDate.value=TODAY;
+  quickRunPacePreview();
+}
+
+function quickRunPacePreview(){
+  const d=parseFloat(document.getElementById('qrDist').value);
+  const t=parseFloat(document.getElementById('qrDur').value);
+  const el=document.getElementById('quickRunPace');
+  el.textContent=(d>0&&t>0)?(paceMinPerKm(d,t)+' min/km'):'';
+}
+function quickAddRun(){
+  const d=parseFloat(document.getElementById('qrDist').value);
+  const t=parseFloat(document.getElementById('qrDur').value);
+  const hr=parseInt(document.getElementById('qrHr').value);
+  const date=document.getElementById('qrDate').value||TODAY;
+  const st=document.getElementById('qrStatus');
+  if(!d||!t){st.style.color='var(--amber)';st.textContent='Distanz und Dauer eingeben.';return;}
+  S.gym.runs.push({id:uid(),date,distanceKm:d,durationMin:t,avgHr:isNaN(hr)?null:hr});
+  save();
+  document.getElementById('qrDist').value='';
+  document.getElementById('qrDur').value='';
+  document.getElementById('qrHr').value='';
+  st.style.color='var(--green)';st.textContent=`Eingetragen: ${d}km · ${paceMinPerKm(d,t)} min/km`;
+  setTimeout(()=>{if(st)st.textContent='';},2600);
+  rGymPicker();
+}
+function quickAddSet(){
+  const exId=document.getElementById('qsEx').value;
+  const w=parseFloat(document.getElementById('qsWeight').value);
+  const reps=parseInt(document.getElementById('qsReps').value);
+  const date=document.getElementById('qsDate').value||TODAY;
+  const st=document.getElementById('qsStatus');
+  if(!exId||isNaN(w)||isNaN(reps)){st.style.color='var(--amber)';st.textContent='Übung, Gewicht und Wdh. eingeben.';return;}
+  const prevBest=bestWeightFor(exId);
+  let session=S.gym.sessions.find(s=>s.date===date);
+  if(!session){session={id:uid(),date,entries:[]};S.gym.sessions.push(session);}
+  session.entries.push({exerciseId:exId,weight:w,reps});
+  save();
+  document.getElementById('qsWeight').value='';
+  document.getElementById('qsReps').value='';
+  const ex=S.gym.exercises.find(e=>e.id===exId);
+  const pr=w>prevBest?' 🏆 PR!':'';
+  st.style.color='var(--green)';st.textContent=`Eingetragen: ${ex?ex.name:''} ${w}kg × ${reps}${pr}`;
+  setTimeout(()=>{if(st)st.textContent='';},2600);
+  rGymPicker();
 }
 
 function allEntriesFor(exerciseId){
@@ -1640,126 +1766,6 @@ function addGymEntry(){
 function deleteGymEntry(idx){
   const session=S.gym.sessions.find(s=>s.date===TODAY);
   if(session){session.entries.splice(idx,1);save();rGym();}
-}
-
-// ── SCREENSHOT-IMPORT (Vision via Anthropic API) ──────
-let pendingFitImport=null;
-function handleFitShot(ev){
-  const file=ev.target.files&&ev.target.files[0];
-  if(!file)return;
-  const status=document.getElementById('fitShotStatus');
-  const preview=document.getElementById('fitShotPreview');
-  preview.innerHTML='';pendingFitImport=null;
-  status.style.color='var(--ink2)';
-  status.textContent='Lese Screenshot…';
-  const reader=new FileReader();
-  reader.onerror=()=>{status.style.color='var(--red)';status.textContent='Datei konnte nicht gelesen werden.';};
-  reader.onload=async()=>{
-    const dataUrl=reader.result;
-    const b64=String(dataUrl).split(',')[1];
-    const mt=(file.type&&/^image\/(png|jpeg|jpg|webp|gif)$/.test(file.type))?(file.type==='image/jpg'?'image/jpeg':file.type):'image/jpeg';
-    try{
-      const data=await callVision(b64,mt);
-      const parsed=parseFitJson(data);
-      if(!parsed||(!parsed.runs?.length&&!parsed.sets?.length)){
-        status.style.color='var(--amber)';
-        status.textContent='Keine Trainingsdaten erkannt. Probier einen klareren Screenshot oder trag manuell ein.';
-        return;
-      }
-      pendingFitImport=parsed;
-      renderFitPreview(parsed);
-      status.style.color='var(--green)';
-      status.textContent='Erkannt — prüfen und bestätigen.';
-    }catch(e){
-      status.style.color='var(--red)';
-      status.textContent='Erkennung fehlgeschlagen: '+(e&&e.message?e.message:'Netzwerkfehler');
-    }
-  };
-  reader.readAsDataURL(file);
-  ev.target.value='';
-}
-
-async function callVision(b64,mediaType){
-  const prompt=`Du bekommst einen Screenshot aus einer Fitness- oder Health-App (z.B. Apple Health, Strava, Hevy, Garmin). Extrahiere alle erkennbaren Trainingsdaten.
-
-Antworte AUSSCHLIESSLICH mit reinem JSON, kein Markdown, kein Text drumrum. Schema:
-{
-  "runs": [ { "date": "YYYY-MM-DD oder null", "distanceKm": number, "durationMin": number, "avgHr": number oder null } ],
-  "sets": [ { "date": "YYYY-MM-DD oder null", "exercise": "Übungsname", "weight": number, "reps": number } ]
-}
-
-Regeln:
-- Läufe/Cardio kommen in "runs", Kraftsätze in "sets".
-- Distanz immer in km, Dauer immer in Minuten (rechne um falls nötig).
-- Wenn ein Datum sichtbar ist, nutze es, sonst null.
-- Wenn nichts erkennbar ist, gib leere Arrays zurück.
-- Keine erfundenen Werte.`;
-  const res=await fetch('https://api.anthropic.com/v1/messages',{
-    method:'POST',
-    headers:{'Content-Type':'application/json'},
-    body:JSON.stringify({
-      model:'claude-sonnet-4-6',
-      max_tokens:1000,
-      messages:[{role:'user',content:[
-        {type:'image',source:{type:'base64',media_type:mediaType,data:b64}},
-        {type:'text',text:prompt}
-      ]}]
-    })
-  });
-  if(!res.ok)throw new Error('API '+res.status);
-  const data=await res.json();
-  return (data.content||[]).filter(b=>b.type==='text').map(b=>b.text).join('\n');
-}
-
-function parseFitJson(text){
-  if(!text)return null;
-  let t=text.replace(/```json/gi,'').replace(/```/g,'').trim();
-  const a=t.indexOf('{'),b=t.lastIndexOf('}');
-  if(a>=0&&b>a)t=t.slice(a,b+1);
-  try{
-    const o=JSON.parse(t);
-    return{runs:Array.isArray(o.runs)?o.runs:[],sets:Array.isArray(o.sets)?o.sets:[]};
-  }catch(e){return null;}
-}
-
-function renderFitPreview(p){
-  const el=document.getElementById('fitShotPreview');
-  let html='<div style="margin-top:12px">';
-  if(p.runs.length){
-    html+='<div class="cl" style="margin-bottom:6px">Läufe</div>';
-    html+=p.runs.map(r=>`<div class="run-card" style="margin-bottom:6px"><div class="run-card-top"><span class="run-card-dist">${r.distanceKm} km</span><span class="run-card-date">${r.date?fmtDate(r.date):'heute'}</span></div><div class="run-card-grid"><div class="run-card-m"><span class="run-card-mv">${r.durationMin} min</span><span class="run-card-ml">Dauer</span></div>${(r.distanceKm&&r.durationMin)?`<div class="run-card-m"><span class="run-card-mv">${paceMinPerKm(r.distanceKm,r.durationMin)}</span><span class="run-card-ml">min/km</span></div>`:''}${r.avgHr?`<div class="run-card-m"><span class="run-card-mv">${r.avgHr}</span><span class="run-card-ml">Ø bpm</span></div>`:''}</div></div>`).join('');
-  }
-  if(p.sets.length){
-    html+='<div class="cl" style="margin:10px 0 6px">Sätze</div>';
-    html+=p.sets.map(s=>`<div class="session-entry"><span style="flex:1;font-size:12.5px;font-weight:600">${escapeHtml(s.exercise||'?')}</span><span style="font-size:12px;color:var(--ink2)">${s.weight}kg × ${s.reps}${s.date?' · '+fmtDate(s.date):''}</span></div>`).join('');
-  }
-  html+=`<button class="btn bp" style="width:100%;justify-content:center;margin-top:12px" onclick="confirmFitImport()">Eintragen</button></div>`;
-  el.innerHTML=html;
-}
-
-function confirmFitImport(){
-  if(!pendingFitImport)return;
-  const p=pendingFitImport;
-  (p.runs||[]).forEach(r=>{
-    if(!r.distanceKm||!r.durationMin)return;
-    S.gym.runs.push({id:uid(),date:r.date||TODAY,distanceKm:Number(r.distanceKm),durationMin:Number(r.durationMin),avgHr:r.avgHr?Number(r.avgHr):null});
-  });
-  (p.sets||[]).forEach(s=>{
-    if(s.weight==null||s.reps==null)return;
-    let ex=S.gym.exercises.find(e=>e.name.toLowerCase()===String(s.exercise||'').toLowerCase());
-    if(!ex){ex={id:uid(),name:s.exercise||'Übung'};S.gym.exercises.push(ex);}
-    const date=s.date||TODAY;
-    let session=S.gym.sessions.find(x=>x.date===date);
-    if(!session){session={id:uid(),date,entries:[]};S.gym.sessions.push(session);}
-    session.entries.push({exerciseId:ex.id,weight:Number(s.weight),reps:Number(s.reps)});
-  });
-  save();
-  pendingFitImport=null;
-  const status=document.getElementById('fitShotStatus');
-  status.style.color='var(--green)';
-  status.textContent='Eingetragen!';
-  document.getElementById('fitShotPreview').innerHTML='';
-  rGymPicker();
 }
 
 // ── LAUF ──────────────────────────────────────────────
