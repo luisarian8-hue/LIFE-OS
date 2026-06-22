@@ -148,6 +148,26 @@ textarea{resize:vertical;line-height:1.55}
 
 /* FILTER TABS */
 .ftabs{display:flex;gap:5px;margin-bottom:14px;flex-wrap:wrap}
+.fit-pick{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.fit-card{display:flex;flex-direction:column;align-items:flex-start;gap:7px;background:var(--surf);border:1px solid var(--bd);border-radius:var(--r);box-shadow:var(--sh);padding:20px 16px;cursor:pointer;transition:all .14s;font-family:inherit;text-align:left;-webkit-tap-highlight-color:transparent}
+.fit-card:hover{border-color:var(--bd2);transform:translateY(-2px)}
+.fit-ic{display:inline-flex;width:30px;height:30px;color:var(--ink);align-items:center;justify-content:center}
+.fit-ic svg{width:30px;height:30px}
+.fit-name{font-size:15px;font-weight:700;color:var(--ink)}
+.fit-meta{font-size:11px;color:var(--ink3);font-weight:500}
+@media(max-width:480px){.fit-pick{grid-template-columns:1fr}}
+.run-stat-row{display:flex;gap:10px}
+.run-stat{flex:1;background:var(--s2);border:1px solid var(--bd);border-radius:var(--rsm);padding:11px 12px}
+.run-stat-n{font-size:19px;font-weight:800;color:var(--ink);letter-spacing:-.5px}
+.run-stat-l{font-size:10.5px;color:var(--ink3);font-weight:600;margin-top:2px;text-transform:uppercase;letter-spacing:.4px}
+.run-card{background:var(--s2);border:1px solid var(--bd);border-radius:var(--rsm);padding:12px 13px;margin-bottom:8px}
+.run-card-top{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px}
+.run-card-dist{font-size:16px;font-weight:800;color:var(--ink);letter-spacing:-.3px}
+.run-card-date{font-size:11px;color:var(--ink3);font-weight:600}
+.run-card-grid{display:flex;gap:14px}
+.run-card-m{display:flex;flex-direction:column}
+.run-card-mv{font-size:13px;font-weight:700;color:var(--ink2)}
+.run-card-ml{font-size:9.5px;color:var(--ink3);font-weight:600;text-transform:uppercase;letter-spacing:.3px;margin-top:1px}
 .ftab{padding:6px 13px;border-radius:20px;border:1px solid var(--bd2);font-size:12.5px;font-weight:600;cursor:pointer;transition:all .12s;background:none;color:var(--ink3);font-family:inherit;-webkit-tap-highlight-color:transparent}
 .ftab:hover{background:var(--s2);color:var(--ink)}
 .ftab.on{background:var(--ink);color:var(--bg);border-color:var(--ink)}
@@ -436,13 +456,35 @@ textarea{resize:vertical;line-height:1.55}
 
 <!-- ══ GYM ══ -->
 <div class="page" id="p-gym">
-  <div class="ph"><div class="pt">Gym</div><div class="ps">Kraft · Lauf · Verlauf</div></div>
-  <div class="ftabs">
-    <button class="ftab on" id="gt-kraft" onclick="setGymView('kraft')">Kraft</button>
-    <button class="ftab" id="gt-lauf" onclick="setGymView('lauf')">Lauf</button>
+  <div class="ph"><div class="pt" id="gymTitle">Fitness</div><div class="ps" id="gymSub">Wähle einen Bereich</div></div>
+
+  <!-- Auswahl-Screen -->
+  <div id="gymPicker">
+    <div class="fit-pick">
+      <button class="fit-card" onclick="setGymView('kraft')">
+        <span class="fit-ic" id="fitIcKraft"></span>
+        <span class="fit-name">Krafttraining</span>
+        <span class="fit-meta" id="fitMetaKraft"></span>
+      </button>
+      <button class="fit-card" onclick="setGymView('lauf')">
+        <span class="fit-ic" id="fitIcLauf"></span>
+        <span class="fit-name">Laufen</span>
+        <span class="fit-meta" id="fitMetaLauf"></span>
+      </button>
+    </div>
+    <div class="card" style="margin-top:14px">
+      <div class="ch"><div class="cl" style="margin:0">Aus Screenshot eintragen</div></div>
+      <div style="font-size:11.5px;color:var(--ink3);margin-bottom:10px;line-height:1.5">Screenshot aus deiner Fitness-App (Apple Health, Strava, Hevy …) hochladen — Werte werden automatisch erkannt und eingetragen.</div>
+      <input type="file" id="fitShot" accept="image/*" style="display:none" onchange="handleFitShot(event)">
+      <button class="btn bp" style="width:100%;justify-content:center" onclick="document.getElementById('fitShot').click()"><span id="fitUploadIc"></span>Screenshot hochladen</button>
+      <div id="fitShotStatus" style="font-size:12px;margin-top:10px;min-height:16px"></div>
+      <div id="fitShotPreview"></div>
+    </div>
   </div>
 
-  <div id="gymKraftView">
+  <button class="btn bsm" id="gymBack" style="display:none;margin-bottom:12px" onclick="gymBackToPicker()">← Zurück</button>
+
+  <div id="gymKraftView" style="display:none">
     <div class="card" style="margin-bottom:12px">
       <div class="ch"><div class="cl" style="margin:0">Heute eintragen</div><span style="font-size:11px;color:var(--ink3)" id="gymTodayLabel"></span></div>
       <select id="entryExercise" onchange="prefillLastSet()" style="margin-bottom:5px"></select>
@@ -481,12 +523,16 @@ textarea{resize:vertical;line-height:1.55}
       <div id="pacePreview" style="font-size:11px;color:var(--ink3);margin-top:6px;min-height:14px"></div>
       <div id="todayRuns"></div>
     </div>
-    <div class="card">
+    <div class="card" style="margin-bottom:12px">
+      <div class="cl">Diese Woche</div>
+      <div id="runWeekStats"></div>
+    </div>
+    <div class="card" style="margin-bottom:12px">
       <div class="cl">Wochenvolumen</div>
       <div id="runWeekChart"></div>
     </div>
     <div class="card">
-      <div class="cl">Verlauf</div>
+      <div class="cl">Letzte Läufe</div>
       <div id="runHistory"></div>
     </div>
   </div>
@@ -622,6 +668,8 @@ const IC={
   chevron:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>',
   sun:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><line x1="12" y1="2" x2="12" y2="5"/><line x1="12" y1="19" x2="12" y2="22"/><line x1="4.2" y1="4.2" x2="6.3" y2="6.3"/><line x1="17.7" y1="17.7" x2="19.8" y2="19.8"/><line x1="2" y1="12" x2="5" y2="12"/><line x1="19" y1="12" x2="22" y2="12"/><line x1="4.2" y1="19.8" x2="6.3" y2="17.7"/><line x1="17.7" y1="6.3" x2="19.8" y2="4.2"/></svg>',
   moon:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8Z"/></svg>',
+  run:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="13" cy="4" r="2"/><path d="m9 21 1.5-5 2.5-2 1 4 4 2"/><path d="m5 12 3-1 3 2 1-3"/><path d="M14 9.5 16 8l3 1"/></svg>',
+  camera:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3Z"/><circle cx="12" cy="13" r="3"/></svg>',
 };
 function ico(svg,sz,c){return'<span style="display:inline-flex;width:'+sz+'px;height:'+sz+'px;color:'+(c||'currentColor')+';flex-shrink:0">'+svg+'</span>';}
 
@@ -826,13 +874,39 @@ function load(){
     const raw=localStorage.getItem(STORAGE_KEY);
     if(raw){
       const parsed=JSON.parse(raw);
-      if(parsed&&typeof parsed==='object'){S=ensureDefaults(parsed);return;}
+      if(parsed&&typeof parsed==='object'){S=ensureDefaults(parsed);seedExistingGym();return;}
     }
   }catch(e){/* corrupted -> fall through */}
   const migrated=migrateFromOld();
-  if(migrated){S=ensureDefaults(migrated);save();return;}
+  if(migrated){S=ensureDefaults(migrated);seedExistingGym();save();return;}
   S=ensureDefaults(defaultState());
+  seedExistingGym();
   save();
+}
+// Einmaliger, idempotenter Seed der bereits erfassten Einträge aus den Screenshots.
+// Fügt nur ein, was noch nicht existiert -> keine Dubletten beim Sync mit echtem Stand.
+function seedExistingGym(){
+  const SEED_RUNS=[
+    {date:'2026-06-20',distanceKm:4,durationMin:24,avgHr:null},
+    {date:'2026-06-18',distanceKm:5.5,durationMin:33,avgHr:160},
+    {date:'2026-06-18',distanceKm:4,durationMin:26,avgHr:160}
+  ];
+  let changed=false;
+  SEED_RUNS.forEach(sr=>{
+    const exists=arr(S.gym.runs).some(r=>r.date===sr.date&&Number(r.distanceKm)===sr.distanceKm&&Number(r.durationMin)===sr.durationMin);
+    if(!exists){S.gym.runs.push({id:uid(),...sr});changed=true;}
+  });
+  // Dips 40kg x 5 am 18.06.
+  let dips=S.gym.exercises.find(e=>e.name.toLowerCase()==='dips');
+  if(!dips){dips={id:uid(),name:'Dips'};S.gym.exercises.push(dips);changed=true;}
+  const dipsExists=arr(S.gym.sessions).some(s=>s.date==='2026-06-18'&&arr(s.entries).some(e=>e.exerciseId===dips.id&&Number(e.weight)===40&&Number(e.reps)===5));
+  if(!dipsExists){
+    let sess=S.gym.sessions.find(s=>s.date==='2026-06-18');
+    if(!sess){sess={id:uid(),date:'2026-06-18',entries:[]};S.gym.sessions.push(sess);}
+    sess.entries.push({exerciseId:dips.id,weight:40,reps:5});
+    changed=true;
+  }
+  if(changed)try{localStorage.setItem(STORAGE_KEY,JSON.stringify(S));}catch(e){}
 }
 function save(){
   S.updatedAt=Date.now();
@@ -843,7 +917,7 @@ function save(){
 // ═══════════════════════════════════════
 // NAV
 // ═══════════════════════════════════════
-const RENDERERS={today:rToday,todo:rTodo,habits:rHabits,budget:rBudget,shopping:rShopping,gym:rGym};
+const RENDERERS={today:rToday,todo:rTodo,habits:rHabits,budget:rBudget,shopping:rShopping,gym:gymBackToPicker};
 function nav(p,btn){
   document.querySelectorAll('.page').forEach(x=>x.classList.remove('on'));
   document.querySelectorAll('.nb,.bni').forEach(x=>x.classList.toggle('on',x.dataset.p===p));
@@ -961,10 +1035,6 @@ function rToday(){
       <div class="today-rings">
         ${ringSm(dailyPct,'var(--green)','Daily')}
         ${ringSm(weeklyPct,'var(--blue)','Weekly')}
-        ${weeklyHabits.slice(0,3).map(hb=>{
-          const pct=weeklyTotal?Math.min(100,weeklyCount(hb,wk)/hb.target*100):0;
-          return ringSm(pct,pct>=100?'var(--green)':'var(--purple)',hb.name);
-        }).join('')}
       </div>
       <div style="margin-top:10px;font-size:11.5px;color:var(--ink3);text-align:center">${doneTodayCount}/${daily.length} heute · ${weeklyDone}/${weeklyTotal} diese Woche</div>
     </div>
@@ -1392,16 +1462,45 @@ function addListItem(){
 // ═══════════════════════════════════════
 // GYM
 // ═══════════════════════════════════════
-let gymView='kraft';
+let gymView=null;
 function setGymView(v){
   gymView=v;
-  document.getElementById('gt-kraft').classList.toggle('on',v==='kraft');
-  document.getElementById('gt-lauf').classList.toggle('on',v==='lauf');
+  document.getElementById('gymPicker').style.display='none';
+  document.getElementById('gymBack').style.display='inline-flex';
   document.getElementById('gymKraftView').style.display=v==='kraft'?'block':'none';
   document.getElementById('gymLaufView').style.display=v==='lauf'?'block':'none';
+  document.getElementById('gymTitle').textContent=v==='kraft'?'Krafttraining':'Laufen';
+  document.getElementById('gymSub').textContent=v==='kraft'?'Sätze · Verlauf · PRs':'Distanz · Pace · Volumen';
   rGym();
 }
-function rGym(){gymView==='kraft'?rGymKraft():rGymLauf();}
+function gymBackToPicker(){
+  gymView=null;
+  document.getElementById('gymPicker').style.display='block';
+  document.getElementById('gymBack').style.display='none';
+  document.getElementById('gymKraftView').style.display='none';
+  document.getElementById('gymLaufView').style.display='none';
+  document.getElementById('gymTitle').textContent='Fitness';
+  document.getElementById('gymSub').textContent='Wähle einen Bereich';
+  rGymPicker();
+}
+function rGym(){
+  if(gymView==='kraft')rGymKraft();
+  else if(gymView==='lauf')rGymLauf();
+  else rGymPicker();
+}
+function rGymPicker(){
+  // Icons
+  document.getElementById('fitIcKraft').innerHTML=IC.dumbbell;
+  document.getElementById('fitIcLauf').innerHTML=IC.run;
+  document.getElementById('fitUploadIc').innerHTML=ico(IC.camera,16);
+  // Meta: letzte Aktivität je Bereich
+  const sessions=arr(S.gym.sessions);
+  const lastSession=sessions.length?sessions.slice().sort((a,b)=>a.date<b.date?1:-1)[0]:null;
+  document.getElementById('fitMetaKraft').textContent=lastSession?('Zuletzt '+fmtDate(lastSession.date)):'Noch keine Sätze';
+  const runs=allRunsSorted();
+  const lastRun=runs.length?runs[runs.length-1]:null;
+  document.getElementById('fitMetaLauf').textContent=lastRun?('Zuletzt '+fmtDate(lastRun.date)+' · '+lastRun.distanceKm+'km'):'Noch keine Läufe';
+}
 
 function allEntriesFor(exerciseId){
   const out=[];
@@ -1543,6 +1642,126 @@ function deleteGymEntry(idx){
   if(session){session.entries.splice(idx,1);save();rGym();}
 }
 
+// ── SCREENSHOT-IMPORT (Vision via Anthropic API) ──────
+let pendingFitImport=null;
+function handleFitShot(ev){
+  const file=ev.target.files&&ev.target.files[0];
+  if(!file)return;
+  const status=document.getElementById('fitShotStatus');
+  const preview=document.getElementById('fitShotPreview');
+  preview.innerHTML='';pendingFitImport=null;
+  status.style.color='var(--ink2)';
+  status.textContent='Lese Screenshot…';
+  const reader=new FileReader();
+  reader.onerror=()=>{status.style.color='var(--red)';status.textContent='Datei konnte nicht gelesen werden.';};
+  reader.onload=async()=>{
+    const dataUrl=reader.result;
+    const b64=String(dataUrl).split(',')[1];
+    const mt=(file.type&&/^image\/(png|jpeg|jpg|webp|gif)$/.test(file.type))?(file.type==='image/jpg'?'image/jpeg':file.type):'image/jpeg';
+    try{
+      const data=await callVision(b64,mt);
+      const parsed=parseFitJson(data);
+      if(!parsed||(!parsed.runs?.length&&!parsed.sets?.length)){
+        status.style.color='var(--amber)';
+        status.textContent='Keine Trainingsdaten erkannt. Probier einen klareren Screenshot oder trag manuell ein.';
+        return;
+      }
+      pendingFitImport=parsed;
+      renderFitPreview(parsed);
+      status.style.color='var(--green)';
+      status.textContent='Erkannt — prüfen und bestätigen.';
+    }catch(e){
+      status.style.color='var(--red)';
+      status.textContent='Erkennung fehlgeschlagen: '+(e&&e.message?e.message:'Netzwerkfehler');
+    }
+  };
+  reader.readAsDataURL(file);
+  ev.target.value='';
+}
+
+async function callVision(b64,mediaType){
+  const prompt=`Du bekommst einen Screenshot aus einer Fitness- oder Health-App (z.B. Apple Health, Strava, Hevy, Garmin). Extrahiere alle erkennbaren Trainingsdaten.
+
+Antworte AUSSCHLIESSLICH mit reinem JSON, kein Markdown, kein Text drumrum. Schema:
+{
+  "runs": [ { "date": "YYYY-MM-DD oder null", "distanceKm": number, "durationMin": number, "avgHr": number oder null } ],
+  "sets": [ { "date": "YYYY-MM-DD oder null", "exercise": "Übungsname", "weight": number, "reps": number } ]
+}
+
+Regeln:
+- Läufe/Cardio kommen in "runs", Kraftsätze in "sets".
+- Distanz immer in km, Dauer immer in Minuten (rechne um falls nötig).
+- Wenn ein Datum sichtbar ist, nutze es, sonst null.
+- Wenn nichts erkennbar ist, gib leere Arrays zurück.
+- Keine erfundenen Werte.`;
+  const res=await fetch('https://api.anthropic.com/v1/messages',{
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({
+      model:'claude-sonnet-4-6',
+      max_tokens:1000,
+      messages:[{role:'user',content:[
+        {type:'image',source:{type:'base64',media_type:mediaType,data:b64}},
+        {type:'text',text:prompt}
+      ]}]
+    })
+  });
+  if(!res.ok)throw new Error('API '+res.status);
+  const data=await res.json();
+  return (data.content||[]).filter(b=>b.type==='text').map(b=>b.text).join('\n');
+}
+
+function parseFitJson(text){
+  if(!text)return null;
+  let t=text.replace(/```json/gi,'').replace(/```/g,'').trim();
+  const a=t.indexOf('{'),b=t.lastIndexOf('}');
+  if(a>=0&&b>a)t=t.slice(a,b+1);
+  try{
+    const o=JSON.parse(t);
+    return{runs:Array.isArray(o.runs)?o.runs:[],sets:Array.isArray(o.sets)?o.sets:[]};
+  }catch(e){return null;}
+}
+
+function renderFitPreview(p){
+  const el=document.getElementById('fitShotPreview');
+  let html='<div style="margin-top:12px">';
+  if(p.runs.length){
+    html+='<div class="cl" style="margin-bottom:6px">Läufe</div>';
+    html+=p.runs.map(r=>`<div class="run-card" style="margin-bottom:6px"><div class="run-card-top"><span class="run-card-dist">${r.distanceKm} km</span><span class="run-card-date">${r.date?fmtDate(r.date):'heute'}</span></div><div class="run-card-grid"><div class="run-card-m"><span class="run-card-mv">${r.durationMin} min</span><span class="run-card-ml">Dauer</span></div>${(r.distanceKm&&r.durationMin)?`<div class="run-card-m"><span class="run-card-mv">${paceMinPerKm(r.distanceKm,r.durationMin)}</span><span class="run-card-ml">min/km</span></div>`:''}${r.avgHr?`<div class="run-card-m"><span class="run-card-mv">${r.avgHr}</span><span class="run-card-ml">Ø bpm</span></div>`:''}</div></div>`).join('');
+  }
+  if(p.sets.length){
+    html+='<div class="cl" style="margin:10px 0 6px">Sätze</div>';
+    html+=p.sets.map(s=>`<div class="session-entry"><span style="flex:1;font-size:12.5px;font-weight:600">${escapeHtml(s.exercise||'?')}</span><span style="font-size:12px;color:var(--ink2)">${s.weight}kg × ${s.reps}${s.date?' · '+fmtDate(s.date):''}</span></div>`).join('');
+  }
+  html+=`<button class="btn bp" style="width:100%;justify-content:center;margin-top:12px" onclick="confirmFitImport()">Eintragen</button></div>`;
+  el.innerHTML=html;
+}
+
+function confirmFitImport(){
+  if(!pendingFitImport)return;
+  const p=pendingFitImport;
+  (p.runs||[]).forEach(r=>{
+    if(!r.distanceKm||!r.durationMin)return;
+    S.gym.runs.push({id:uid(),date:r.date||TODAY,distanceKm:Number(r.distanceKm),durationMin:Number(r.durationMin),avgHr:r.avgHr?Number(r.avgHr):null});
+  });
+  (p.sets||[]).forEach(s=>{
+    if(s.weight==null||s.reps==null)return;
+    let ex=S.gym.exercises.find(e=>e.name.toLowerCase()===String(s.exercise||'').toLowerCase());
+    if(!ex){ex={id:uid(),name:s.exercise||'Übung'};S.gym.exercises.push(ex);}
+    const date=s.date||TODAY;
+    let session=S.gym.sessions.find(x=>x.date===date);
+    if(!session){session={id:uid(),date,entries:[]};S.gym.sessions.push(session);}
+    session.entries.push({exerciseId:ex.id,weight:Number(s.weight),reps:Number(s.reps)});
+  });
+  save();
+  pendingFitImport=null;
+  const status=document.getElementById('fitShotStatus');
+  status.style.color='var(--green)';
+  status.textContent='Eingetragen!';
+  document.getElementById('fitShotPreview').innerHTML='';
+  rGymPicker();
+}
+
 // ── LAUF ──────────────────────────────────────────────
 function todayRunsList(){return arr(S.gym.runs).filter(r=>r.date===TODAY);}
 function allRunsSorted(){return arr(S.gym.runs).slice().sort((a,b)=>a.date<b.date?-1:1);}
@@ -1587,20 +1806,41 @@ function rGymLauf(){
   const today=todayRunsList();
   document.getElementById('todayRuns').innerHTML=today.length?today.map(r=>`<div class="session-entry"><span style="flex:1;font-size:12.5px;font-weight:600">${r.distanceKm}km</span><span style="font-size:12px;color:var(--ink2)">${r.durationMin} min · ${paceMinPerKm(r.distanceKm,r.durationMin)} min/km${r.avgHr?' · Ø '+r.avgHr+' bpm':''}</span><button class="db" style="opacity:1" onclick="deleteRun('${r.id}')">×</button></div>`).join(''):'<div class="empty" style="padding:10px 0">Noch kein Lauf heute</div>';
 
+  // Diese-Woche-Stats (WHOOP-Stil: nackte Zahlen, kein Wertungs-Trend)
+  const wk=weekStartKey(NOW);
+  const weDate=new Date(wk+'T00:00:00');weDate.setDate(weDate.getDate()+6);
+  const we=dKey(weDate);
+  const thisWeek=arr(S.gym.runs).filter(r=>r.date>=wk&&r.date<=we);
+  const wkKm=thisWeek.reduce((s,r)=>s+(Number(r.distanceKm)||0),0);
+  const wkMin=thisWeek.reduce((s,r)=>s+(Number(r.durationMin)||0),0);
+  const wkPace=wkKm>0?paceMinPerKm(wkKm,wkMin):'—';
+  document.getElementById('runWeekStats').innerHTML=`<div class="run-stat-row">
+    <div class="run-stat"><div class="run-stat-n">${wkKm.toFixed(1)}</div><div class="run-stat-l">km gesamt</div></div>
+    <div class="run-stat"><div class="run-stat-n">${thisWeek.length}</div><div class="run-stat-l">Läufe</div></div>
+    <div class="run-stat"><div class="run-stat-n">${wkPace}</div><div class="run-stat-l">Ø Pace</div></div>
+  </div>`;
+
   const weeks=weeklyRunVolumes(8).map(w=>{
     const d=new Date(w.weekStart+'T00:00:00');
     return{label:d.toLocaleDateString('de-DE',{day:'2-digit',month:'2-digit'}),value:Math.round(w.km*10)/10};
   });
   document.getElementById('runWeekChart').innerHTML=weeks.some(w=>w.value>0)?barChart(weeks,'var(--blue)')+'<div style="font-size:10px;color:var(--ink3);text-align:center;margin-top:4px">km pro Woche, letzte 8 Wochen</div>':'<div class="empty">Noch keine Läufe erfasst</div>';
 
+  // Letzte Läufe als Karten (kein Tempo-Trend mehr — langsamer Lauf ist kein Rückschritt)
   const all=allRunsSorted();
-  const recent=all.slice(-8).reverse();
-  const speedPoints=all.slice(-10).map(r=>({weight:r.distanceKm/(r.durationMin/60)}));
-  document.getElementById('runHistory').innerHTML=recent.length?`
-    <div style="font-size:10.5px;color:var(--ink3);margin-bottom:2px">Tempo-Trend (km/h, höher = schneller)</div>
-    ${speedPoints.length>=2?sparkChart(speedPoints,'var(--blue)'):''}
-    ${recent.map(r=>`<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--bd);font-size:12px;color:var(--ink2)"><span>${fmtDate(r.date)}</span><span>${r.distanceKm}km · ${r.durationMin}min · ${paceMinPerKm(r.distanceKm,r.durationMin)} min/km${r.avgHr?' · Ø '+r.avgHr+' bpm':''}</span></div>`).join('')}
-  `:'<div class="empty">Noch keine Läufe erfasst</div>';
+  const recent=all.slice(-12).reverse();
+  document.getElementById('runHistory').innerHTML=recent.length?recent.map(r=>`
+    <div class="run-card">
+      <div class="run-card-top">
+        <span class="run-card-dist">${r.distanceKm} km</span>
+        <span class="run-card-date">${fmtDate(r.date)}</span>
+      </div>
+      <div class="run-card-grid">
+        <div class="run-card-m"><span class="run-card-mv">${r.durationMin} min</span><span class="run-card-ml">Dauer</span></div>
+        <div class="run-card-m"><span class="run-card-mv">${paceMinPerKm(r.distanceKm,r.durationMin)}</span><span class="run-card-ml">min/km</span></div>
+        ${r.avgHr?`<div class="run-card-m"><span class="run-card-mv">${r.avgHr}</span><span class="run-card-ml">Ø bpm</span></div>`:''}
+      </div>
+    </div>`).join(''):'<div class="empty">Noch keine Läufe erfasst</div>';
 }
 
 // ═══════════════════════════════════════
